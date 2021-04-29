@@ -1,0 +1,7 @@
+{
+  "presets": ["next/babel", "linaria/babel"],
+  "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
+    "babel-plugin-ts-nameof"
+  ]
+}
