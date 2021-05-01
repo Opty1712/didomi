@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormGroup,
   TextField,
@@ -9,38 +10,22 @@ import {
 import { css } from 'linaria';
 import { styled } from 'linaria/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  addConsent,
+  ConsentVariants,
+  consentVariants,
+  InputFields,
+  inputFields,
+  useAppDispatch
+} from '../store';
 import { getKeys } from '../utils';
-import { consentVariants, InputFields, inputFields } from './interface';
-import { Title } from './Layout/Title';
-
-type ConsentFields = Record<keyof typeof consentVariants, boolean>;
-type FormState = InputFields & { consents: ConsentFields };
-
-const consentKeys = getKeys(consentVariants);
-
-const consentsInitialState: ConsentFields = consentKeys.reduce<ConsentFields>(
-  (accumulator, current) => {
-    accumulator[current] = false;
-
-    return accumulator;
-  },
-  {} as ConsentFields
-);
-
-const inputKeys = getKeys(inputFields);
-const inputFieldsInitialState = inputKeys.reduce<InputFields>(
-  (accumulator, current) => {
-    accumulator[current] = '';
-
-    return accumulator;
-  },
-  {} as InputFields
-);
+import { Title } from './Title';
 
 export const Form = memo(() => {
+  const dispatch = useAppDispatch();
+
   const [state, setState] = useState<FormState>({
-    ...inputFieldsInitialState,
-    consents: { ...consentsInitialState }
+    ...initialState
   });
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -74,7 +59,10 @@ export const Form = memo(() => {
       if (target instanceof HTMLInputElement) {
         setState((value) => ({
           ...value,
-          consents: { ...value.consents, [fieldKey]: target.checked }
+          consentGivenFor: {
+            ...value.consentGivenFor,
+            [fieldKey]: target.checked
+          }
         }));
       }
     },
@@ -102,7 +90,9 @@ export const Form = memo(() => {
 
   const validate = useCallback(() => {
     const isTextFieldsFilled = inputKeys.every((item) => state[item] !== '');
-    const isCheckboxesFilled = consentKeys.some((item) => state.consents[item]);
+    const isCheckboxesFilled = consentKeys.some(
+      (item) => state.consentGivenFor[item]
+    );
 
     return isTextFieldsFilled && isCheckboxesFilled;
   }, [state]);
@@ -114,6 +104,33 @@ export const Form = memo(() => {
       setIsButtonDisabled(true);
     }
   }, [validate]);
+
+  const resetForm = useCallback(() => setState({ ...initialState }), []);
+
+  const onSend = useCallback(() => {
+    const inputFields = inputKeys.reduce<InputFields>(
+      (accumulator, current) => {
+        accumulator[current] = state[current];
+
+        return accumulator;
+      },
+      {} as InputFields
+    );
+
+    const consentGivenFor = consentKeys
+      .filter((item) => state.consentGivenFor[item])
+      .map((item) => ConsentVariants[item]);
+
+    dispatch(
+      addConsent({
+        ...inputFields,
+        consentGivenFor,
+        id: Math.random()
+      })
+    );
+
+    resetForm();
+  }, [dispatch, resetForm, state]);
 
   return (
     <>
@@ -127,8 +144,9 @@ export const Form = memo(() => {
             variant="contained"
             color="primary"
             disabled={isButtonDisabled}
+            onClick={onSend}
           >
-            Give consent
+            Give consent <CircularProgress size={14} />
           </Button>
         </ButtonWrapper>
       </Root>
@@ -136,6 +154,35 @@ export const Form = memo(() => {
   );
 });
 Form.displayName = nameof(Form);
+
+type ConsentFields = Record<keyof typeof consentVariants, boolean>;
+type FormState = InputFields & { consentGivenFor: ConsentFields };
+
+const consentKeys = getKeys(consentVariants);
+
+const consentsInitialState: ConsentFields = consentKeys.reduce<ConsentFields>(
+  (accumulator, current) => {
+    accumulator[current] = false;
+
+    return accumulator;
+  },
+  {} as ConsentFields
+);
+
+const inputKeys = getKeys(inputFields);
+const inputFieldsInitialState = inputKeys.reduce<InputFields>(
+  (accumulator, current) => {
+    accumulator[current] = '';
+
+    return accumulator;
+  },
+  {} as InputFields
+);
+
+const initialState: FormState = {
+  ...inputFieldsInitialState,
+  consentGivenFor: { ...consentsInitialState }
+};
 
 const Root = styled.form`
   padding-bottom: 20px;

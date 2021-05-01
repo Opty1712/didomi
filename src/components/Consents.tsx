@@ -1,11 +1,18 @@
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { css } from 'linaria';
 import { styled } from 'linaria/react';
-import React, { memo } from 'react';
-import { ConsentVariants, inputFields } from './interface';
-import { Title } from './Layout/Title';
+import React, { memo, useMemo } from 'react';
+import { inputFields, useAppSelector } from '../store';
+import { Title } from './Title';
 
 export const Consents = memo(() => {
+  const consents = useAppSelector((state) => state.consents.value);
+
+  const rows = useMemo(
+    () => consents.map((item, index) => ({ ...item, index: index + 1 })),
+    [consents]
+  );
+
   return (
     <>
       <Title>Collected Consents</Title>
@@ -16,12 +23,6 @@ export const Consents = memo(() => {
   );
 });
 Consents.displayName = nameof(Consents);
-
-type Consent = typeof inputFields & {
-  id: number;
-  index: string;
-  consentGivenFor: ConsentVariants[];
-};
 
 const th = css`
   && .MuiDataGrid-colCellTitle {
@@ -57,34 +58,6 @@ const columns: GridColDef[] = [
     flex: 400,
     headerClassName: th,
     renderCell: renderConsentsCell
-  }
-];
-
-const rows: Consent[] = [
-  {
-    id: 1,
-    index: '1',
-    name: 'name',
-    email: 'email',
-    consentGivenFor: [
-      ConsentVariants.BeShownTargetedAs,
-      ConsentVariants.ContributeToAnonymousVisitStatistics,
-      ConsentVariants.ReceiveNewsletters
-    ]
-  },
-  {
-    id: 2,
-    index: '2',
-    name: 'is Awesome',
-    email: 'email',
-    consentGivenFor: []
-  },
-  {
-    id: 3,
-    index: '3',
-    name: 'is Amazing',
-    email: 'email',
-    consentGivenFor: []
   }
 ];
 
