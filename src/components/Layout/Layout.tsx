@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { useSwitcher } from '../../utils';
 import { Content } from './Content';
 import { Header } from './Header';
-import { Menu } from './Menu';
+import { Left } from './Left';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export const Layout = memo<LayoutProps>(({ children }) => {
   return (
     <Root>
       <Header isDrawerOpen={isSwitchedOn} />
-      <Menu isDrawerOpen={isSwitchedOn} toggle={toggleSwitcher} />
+      <Left isDrawerOpen={isSwitchedOn} toggle={toggleSwitcher} />
       <Content isDrawerOpen={isSwitchedOn}>{children}</Content>
     </Root>
   );

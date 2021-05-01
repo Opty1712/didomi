@@ -1,1 +1,1 @@
-export { App as default } from '../src/containers';
+export { CollectedConsents as default } from '../src/containers';
