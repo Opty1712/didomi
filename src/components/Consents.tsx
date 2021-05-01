@@ -1,26 +1,27 @@
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { css } from 'linaria';
+import { styled } from 'linaria/react';
 import React, { memo } from 'react';
-import { ConsentVariants } from './interface';
+import { ConsentVariants, inputFields } from './interface';
 import { Title } from './Layout/Title';
 
 export const Consents = memo(() => {
   return (
     <>
       <Title>Collected Consents</Title>
-      <DataGrid rows={rows} columns={columns} pageSize={2} autoHeight />
+      <GridWrapper>
+        <DataGrid rows={rows} columns={columns} pageSize={2} autoHeight />
+      </GridWrapper>
     </>
   );
 });
 Consents.displayName = nameof(Consents);
 
-interface Consent {
+type Consent = typeof inputFields & {
   id: number;
   index: string;
-  name: string;
-  email: string;
   consentGivenFor: ConsentVariants[];
-}
+};
 
 const th = css`
   && .MuiDataGrid-colCellTitle {
@@ -38,8 +39,18 @@ const renderConsentsCell = (params: any) => {
 
 const columns: GridColDef[] = [
   { field: 'index', headerName: '#', flex: 40, headerClassName: th },
-  { field: 'name', headerName: 'Name', flex: 200, headerClassName: th },
-  { field: 'email', headerName: 'Email', flex: 150, headerClassName: th },
+  {
+    field: nameof(inputFields['name']),
+    headerName: inputFields['name'],
+    flex: 200,
+    headerClassName: th
+  },
+  {
+    field: inputFields['email'],
+    headerName: inputFields['email'],
+    flex: 150,
+    headerClassName: th
+  },
   {
     field: 'consentGivenFor',
     headerName: 'Consent given for',
@@ -57,8 +68,8 @@ const rows: Consent[] = [
     email: 'email',
     consentGivenFor: [
       ConsentVariants.BeShownTargetedAs,
-      ConsentVariants.ReceiveNewsletters,
-      ConsentVariants.ContributeToAnonymousVisitStatistics
+      ConsentVariants.ContributeToAnonymousVisitStatistics,
+      ConsentVariants.ReceiveNewsletters
     ]
   },
   {
@@ -76,3 +87,7 @@ const rows: Consent[] = [
     consentGivenFor: []
   }
 ];
+
+const GridWrapper = styled.div`
+  padding: 0 20px 20px 20px;
+`;

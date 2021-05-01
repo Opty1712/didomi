@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -7,63 +8,129 @@ import {
 } from '@material-ui/core';
 import { css } from 'linaria';
 import { styled } from 'linaria/react';
-import React, { memo } from 'react';
-import { ConsentVariants } from './interface';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { getKeys } from '../utils';
+import { consentVariants, InputFields, inputFields } from './interface';
 import { Title } from './Layout/Title';
 
+type ConsentFields = Record<keyof typeof consentVariants, boolean>;
+type FormState = InputFields & { consents: ConsentFields };
+
+const consentKeys = getKeys(consentVariants);
+
+const consentsInitialState: ConsentFields = consentKeys.reduce<ConsentFields>(
+  (accumulator, current) => {
+    accumulator[current] = false;
+
+    return accumulator;
+  },
+  {} as ConsentFields
+);
+
+const inputKeys = getKeys(inputFields);
+const inputFieldsInitialState = inputKeys.reduce<InputFields>(
+  (accumulator, current) => {
+    accumulator[current] = '';
+
+    return accumulator;
+  },
+  {} as InputFields
+);
+
 export const Form = memo(() => {
+  const [state, setState] = useState<FormState>({
+    ...inputFieldsInitialState,
+    consents: { ...consentsInitialState }
+  });
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const getInputOnChangeHandler = useCallback(
+    (fieldKey: keyof InputFields) => (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => setState((value) => ({ ...value, [fieldKey]: event.target.value })),
+    []
+  );
+
+  const textFields = useMemo(
+    () =>
+      inputKeys.map((item) => (
+        <TextField
+          key={item}
+          label={inputFields[item]}
+          required
+          className={field}
+          onChange={getInputOnChangeHandler(item)}
+        />
+      )),
+    [getInputOnChangeHandler]
+  );
+
+  const getCheckboxOnChangeHandler = useCallback(
+    (fieldKey: keyof ConsentFields) => (
+      event: React.MouseEvent<HTMLElement>
+    ) => {
+      const target = event.target;
+      if (target instanceof HTMLInputElement) {
+        setState((value) => ({
+          ...value,
+          consents: { ...value.consents, [fieldKey]: target.checked }
+        }));
+      }
+    },
+    []
+  );
+
+  const checkboxFields = useMemo(
+    () =>
+      consentKeys.map((item) => (
+        <FormControlLabel
+          key={item}
+          control={
+            <Checkbox
+              onChange={() => void 0}
+              name="checkedA"
+              color="primary"
+              onClick={getCheckboxOnChangeHandler(item)}
+            />
+          }
+          label={consentVariants[item]}
+        />
+      )),
+    [getCheckboxOnChangeHandler]
+  );
+
+  const validate = useCallback(() => {
+    const isTextFieldsFilled = inputKeys.every((item) => state[item] !== '');
+    const isCheckboxesFilled = consentKeys.some((item) => state.consents[item]);
+
+    return isTextFieldsFilled && isCheckboxesFilled;
+  }, [state]);
+
+  useEffect(() => {
+    if (validate()) {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  }, [validate]);
+
   return (
     <>
       <Title>Give consent</Title>
       <Root noValidate autoComplete="off">
-        <TextField
-          id="standard-basic"
-          label="Name"
-          required
-          className={field}
-        />
-        <TextField
-          id="outlined-basic"
-          label="Email"
-          required
-          className={field}
-        />
-        <Typography className={text}>I agree to:</Typography>
-        <FormGroup className={consents}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={true}
-                onChange={() => void 0}
-                name="checkedA"
-                color="primary"
-              />
-            }
-            label={ConsentVariants.ReceiveNewsletters}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={true}
-                onChange={() => void 0}
-                name="checkedA"
-                color="primary"
-              />
-            }
-            label={ConsentVariants.BeShownTargetedAs}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={true}
-                onChange={() => void 0}
-                name="checkedA"
-                color="primary"
-              />
-            }
-            label={ConsentVariants.ContributeToAnonymousVisitStatistics}
-          />
-        </FormGroup>
+        {textFields}
+        <Typography className={text}>I agree to *:</Typography>
+        <FormGroup className={consents}>{checkboxFields}</FormGroup>
+        <ButtonWrapper>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={isButtonDisabled}
+          >
+            Give consent
+          </Button>
+        </ButtonWrapper>
       </Root>
     </>
   );
@@ -96,4 +163,12 @@ const consents = css`
   & .PrivateSwitchBase-input-11 {
     display: none;
   }
+
+  & .PrivateSwitchBase-root-1 {
+    padding: 12px;
+  }
+`;
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
 `;
