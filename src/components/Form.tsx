@@ -4,9 +4,11 @@ import {
   CircularProgress,
   FormControlLabel,
   FormGroup,
+  Snackbar,
   TextField,
   Typography
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab/';
 import { css } from 'linaria';
 import { styled } from 'linaria/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -46,9 +48,10 @@ export const Form = memo(() => {
           required
           className={field}
           onChange={getInputOnChangeHandler(item)}
+          value={state[item]}
         />
       )),
-    [getInputOnChangeHandler]
+    [getInputOnChangeHandler, state]
   );
 
   const getCheckboxOnChangeHandler = useCallback(
@@ -80,12 +83,13 @@ export const Form = memo(() => {
               name="checkedA"
               color="primary"
               onClick={getCheckboxOnChangeHandler(item)}
+              checked={state.consentGivenFor[item]}
             />
           }
           label={consentVariants[item]}
         />
       )),
-    [getCheckboxOnChangeHandler]
+    [getCheckboxOnChangeHandler, state.consentGivenFor]
   );
 
   const validate = useCallback(() => {
@@ -130,7 +134,14 @@ export const Form = memo(() => {
     );
 
     resetForm();
+    setIsNotificationVisible(true);
   }, [dispatch, resetForm, state]);
+
+  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const hideNotification = useCallback(
+    () => setIsNotificationVisible(false),
+    []
+  );
 
   return (
     <>
@@ -150,6 +161,22 @@ export const Form = memo(() => {
           </Button>
         </ButtonWrapper>
       </Root>
+      {isNotificationVisible && (
+        <Snackbar
+          open={true}
+          autoHideDuration={3000}
+          onClose={hideNotification}
+        >
+          <Alert
+            elevation={6}
+            variant="filled"
+            onClose={hideNotification}
+            severity="success"
+          >
+            Your consent has been saved
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 });
