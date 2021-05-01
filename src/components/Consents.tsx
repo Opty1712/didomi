@@ -1,6 +1,7 @@
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { css } from 'linaria';
 import React, { memo } from 'react';
+import { ConsentVariants } from './interface';
 import { Title } from './Layout/Title';
 
 export const Consents = memo(() => {
@@ -12,12 +13,6 @@ export const Consents = memo(() => {
   );
 });
 Consents.displayName = nameof(Consents);
-
-enum ConsentVariants {
-  ReceiveNewsletters = 'Receive newsletters',
-  BeShownTargetedAs = 'Be shown targeted as',
-  ContributeToAnonymousVisitStatistics = 'Contribute to anonymous visit statistics'
-}
 
 interface Consent {
   id: number;
