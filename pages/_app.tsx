@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { Layout } from '../src/components';
 import { store } from '../src/store';
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Layout>
       <Head>
@@ -17,5 +17,3 @@ function MyApp({ Component, pageProps }: AppProps) {
     </Layout>
   );
 }
-
-export default MyApp;

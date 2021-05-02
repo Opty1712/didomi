@@ -17,7 +17,13 @@ export const Consents = memo(() => {
     <>
       <Title>Collected Consents</Title>
       <GridWrapper>
-        <DataGrid rows={rows} columns={columns} pageSize={2} autoHeight />
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={2}
+          autoHeight
+          loading={rows.length === 0}
+        />
       </GridWrapper>
     </>
   );
