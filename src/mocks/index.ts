@@ -1,3 +1,3 @@
 export { mockData } from './data';
-export { getConsentsMock } from './getConsentsMock';
-export { useAddMockData } from './hooks';
+export { useAddMockData } from './getConsents';
+export { usePostConsent } from './postConsent';

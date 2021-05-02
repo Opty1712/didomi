@@ -12,19 +12,18 @@ import { Alert } from '@material-ui/lab/';
 import { css } from 'linaria';
 import { styled } from 'linaria/react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { usePostConsent } from '../mocks';
 import {
-  addConsent,
   ConsentVariants,
   consentVariants,
   InputFields,
-  inputFields,
-  useAppDispatch
+  inputFields
 } from '../store';
 import { getKeys } from '../utils';
 import { Title } from './Title';
 
 export const Form = memo(() => {
-  const dispatch = useAppDispatch();
+  const { postConsent } = usePostConsent();
 
   const [state, setState] = useState<FormState>({
     ...initialState
@@ -109,9 +108,15 @@ export const Form = memo(() => {
     }
   }, [validate]);
 
-  const resetForm = useCallback(() => setState({ ...initialState }), []);
+  const resetForm = useCallback(() => {
+    setState({ ...initialState });
+    setIsButtonDisabled(true);
+  }, []);
 
-  const onSend = useCallback(() => {
+  const onSend = useCallback(async () => {
+    setIsButtonDisabled(true);
+    setIsLoading(true);
+
     const inputFields = inputKeys.reduce<InputFields>(
       (accumulator, current) => {
         accumulator[current] = state[current];
@@ -125,19 +130,27 @@ export const Form = memo(() => {
       .filter((item) => state.consentGivenFor[item])
       .map((item) => ConsentVariants[item]);
 
-    dispatch(
-      addConsent({
-        ...inputFields,
-        consentGivenFor,
-        id: Math.random()
-      })
-    );
+    const result = await postConsent({
+      ...inputFields,
+      consentGivenFor,
+      id: Math.random()
+    });
 
-    resetForm();
+    setIsAdded(Boolean(result));
     setIsNotificationVisible(true);
-  }, [dispatch, resetForm, state]);
+    setIsLoading(false);
+
+    if (result) {
+      resetForm();
+    } else {
+      setIsButtonDisabled(false);
+    }
+  }, [postConsent, resetForm, state]);
 
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [isAdded, setIsAdded] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const hideNotification = useCallback(
     () => setIsNotificationVisible(false),
     []
@@ -157,10 +170,11 @@ export const Form = memo(() => {
             disabled={isButtonDisabled}
             onClick={onSend}
           >
-            Give consent <CircularProgress size={14} />
+            Give consent {isLoading && <CircularProgress size={14} />}
           </Button>
         </ButtonWrapper>
       </Root>
+
       {isNotificationVisible && (
         <Snackbar
           open={true}
@@ -171,9 +185,11 @@ export const Form = memo(() => {
             elevation={6}
             variant="filled"
             onClose={hideNotification}
-            severity="success"
+            severity={isAdded ? 'success' : 'error'}
           >
-            Your consent has been saved
+            {isAdded
+              ? 'Your consent has been saved'
+              : 'Your consent has not been saved'}
           </Alert>
         </Snackbar>
       )}
