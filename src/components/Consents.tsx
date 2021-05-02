@@ -53,7 +53,7 @@ const columns: GridColDef[] = [
     headerClassName: th
   },
   {
-    field: inputFields['email'],
+    field: nameof(inputFields['email']),
     headerName: inputFields['email'],
     flex: 150,
     headerClassName: th
