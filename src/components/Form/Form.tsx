@@ -8,10 +8,9 @@ import {
 import { Alert } from '@material-ui/lab/';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { usePostConsent } from '../../mocks';
-import { ConsentVariants, InputFields } from '../../store';
 import { Title } from '../Title';
-import { consentKeys, initialState, inputKeys } from './constants';
-import { validate } from './helpers';
+import { initialState } from './constants';
+import { makeConsent, validate } from './helpers';
 import { FormState } from './interface';
 import { ButtonWrapper, consents, Root, text } from './styled';
 import { useGetFields } from './useGetFields';
@@ -30,15 +29,11 @@ export const Form = memo(() => {
   const { checkboxFields, textFields } = useGetFields(state, setState);
 
   useEffect(() => {
-    if (validate(state)) {
-      setIsButtonDisabled(false);
-    } else {
-      setIsButtonDisabled(true);
-    }
+    setIsButtonDisabled(!validate(state));
   }, [state]);
 
   const resetForm = useCallback(() => {
-    setState({ ...initialState });
+    setState(initialState);
     setIsButtonDisabled(true);
   }, []);
 
@@ -46,24 +41,7 @@ export const Form = memo(() => {
     setIsButtonDisabled(true);
     setIsLoading(true);
 
-    const inputFields = inputKeys.reduce<InputFields>(
-      (accumulator, current) => {
-        accumulator[current] = state[current];
-
-        return accumulator;
-      },
-      {} as InputFields
-    );
-
-    const consentGivenFor = consentKeys
-      .filter((item) => state.consentGivenFor[item])
-      .map((item) => ConsentVariants[item]);
-
-    const result = await postConsent({
-      ...inputFields,
-      consentGivenFor,
-      id: Math.random()
-    });
+    const result = await postConsent(makeConsent(state));
 
     setIsAdded(Boolean(result));
     setIsNotificationVisible(true);
