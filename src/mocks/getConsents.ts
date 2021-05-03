@@ -3,8 +3,9 @@ import 'isomorphic-fetch';
 import { addInitialMockData, useAppDispatch, useAppSelector } from '../store';
 import { sleep } from '../utils';
 import { url } from './constant';
-import { mockData } from './data';
+import { mockData } from './mockData';
 
+/** Fetch of consents */
 const getConsents = async () => {
   const result = await fetch(url, { method: 'GET' })
     .then((response) => response.json())
@@ -13,6 +14,7 @@ const getConsents = async () => {
   return result;
 };
 
+/** Mocked fetch according to task requirements */
 const getConsentsMock = async () => {
   await sleep();
   fetchMock.get(url, mockData);
@@ -24,6 +26,7 @@ const getConsentsMock = async () => {
   return data;
 };
 
+/** Hook for getting consents from server and putting data into Redux store */
 export const useAddMockData = () => {
   const consents = useAppSelector((state) => state.consents.value);
   const dispatch = useAppDispatch();

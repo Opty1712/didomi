@@ -2,7 +2,10 @@ import Typography from '@material-ui/core/Typography';
 import { css } from 'linaria';
 import React, { memo } from 'react';
 
-export const Title = memo((props) => (
+/**
+ * Title of the page
+ */
+export const Title = memo(({ children }) => (
   <Typography
     component="h2"
     variant="h6"
@@ -10,7 +13,7 @@ export const Title = memo((props) => (
     gutterBottom
     className={title}
   >
-    {props.children}
+    {children}
   </Typography>
 ));
 Title.displayName = nameof(Title);

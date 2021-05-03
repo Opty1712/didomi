@@ -7,21 +7,27 @@ import { drawerWidth, transitionDuration } from '../../constants';
 import { Footer } from './Footer';
 import { CommonProps } from './interface';
 
+/** Props for `Content` */
 type ContentProps = CommonProps & { children: React.ReactNode };
 
-export const Content = memo<ContentProps>(({ isDrawerOpen, children }) => (
-  <Container
-    maxWidth="lg"
-    className={cx(container, isDrawerOpen && containerSmall)}
-  >
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Paper>{children}</Paper>
+/**
+ * Layout of conntent part of the page
+ */
+export const Content = memo<ContentProps>(
+  ({ isLeftColumnFullyVisible, children }) => (
+    <Container
+      maxWidth="lg"
+      className={cx(container, isLeftColumnFullyVisible && containerSmall)}
+    >
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper>{children}</Paper>
+        </Grid>
       </Grid>
-    </Grid>
-    <Footer />
-  </Container>
-));
+      <Footer />
+    </Container>
+  )
+);
 Content.displayName = nameof(Content);
 
 const container = css`

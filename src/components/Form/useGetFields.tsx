@@ -5,6 +5,7 @@ import { consentKeys, inputKeys } from './constants';
 import { ConsentFields, FormState } from './interface';
 import { field } from './styled';
 
+/** Hook for making arrays of fields for `Form` */
 export const useGetFields = (
   state: FormState,
   setState: Dispatch<SetStateAction<FormState>>

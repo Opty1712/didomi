@@ -1,6 +1,7 @@
-import { Consent, ConsentVariants } from '../store';
+import { ConsentServer, ConsentVariants } from '../store';
 
-export const mockData: Consent[] = [
+/** Initial mocks of consents data */
+export const mockData: ConsentServer[] = [
   {
     id: Math.random(),
     name: 'Joseph Ivanovich',

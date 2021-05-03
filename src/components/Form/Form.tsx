@@ -15,6 +15,9 @@ import { FormState } from './interface';
 import { ButtonWrapper, consents, Root, text } from './styled';
 import { useGetFields } from './useGetFields';
 
+/**
+ * Adding consent form
+ */
 export const Form = memo(() => {
   const { postConsent } = usePostConsent();
 

@@ -1,5 +1,8 @@
 import { useCallback, useState } from 'react';
 
+/**
+ * Hook used for getting current state «true/false» and methods for setting it
+ */
 export const useSwitcher = (isDefaultSwitchedOn = false) => {
   const [isSwitchedOn, setIsSwitchedOn] = useState(isDefaultSwitchedOn);
 

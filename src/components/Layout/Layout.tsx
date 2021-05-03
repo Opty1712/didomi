@@ -3,20 +3,22 @@ import React, { memo } from 'react';
 import { useSwitcher } from '../../utils';
 import { Content } from './Content';
 import { Header } from './Header';
-import { Left } from './Left';
+import { LeftColumn } from './LeftColumn';
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
-
-export const Layout = memo<LayoutProps>(({ children }) => {
+/**
+ * Layout of the page
+ */
+export const Layout = memo(({ children }) => {
   const { isSwitchedOn, toggleSwitcher } = useSwitcher(true);
 
   return (
     <Root>
-      <Header isDrawerOpen={isSwitchedOn} />
-      <Left isDrawerOpen={isSwitchedOn} toggle={toggleSwitcher} />
-      <Content isDrawerOpen={isSwitchedOn}>{children}</Content>
+      <Header isLeftColumnFullyVisible={isSwitchedOn} />
+      <LeftColumn
+        isLeftColumnFullyVisible={isSwitchedOn}
+        toggle={toggleSwitcher}
+      />
+      <Content isLeftColumnFullyVisible={isSwitchedOn}>{children}</Content>
     </Root>
   );
 });

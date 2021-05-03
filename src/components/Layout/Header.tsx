@@ -4,10 +4,13 @@ import React, { memo } from 'react';
 import { drawerWidth, transitionDuration } from '../../constants';
 import { CommonProps } from './interface';
 
-export const Header = memo<CommonProps>(({ isDrawerOpen }) => (
+/**
+ * Header of the page
+ */
+export const Header = memo<CommonProps>(({ isLeftColumnFullyVisible }) => (
   <AppBar
     position="absolute"
-    className={cx(appBar, isDrawerOpen && appBarShift)}
+    className={cx(appBar, isLeftColumnFullyVisible && appBarShift)}
   >
     <Toolbar>
       <Typography component="h1" variant="h6" color="inherit" noWrap>

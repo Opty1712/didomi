@@ -1,26 +1,47 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Consent } from './interface';
+import { ConsentServer } from './interface';
 
+/**
+ * Redux storage state config
+ */
 interface ConsentState {
-  value: Consent[];
+  value: ConsentServer[];
 }
 
+/**
+ * Redux storage initial value
+ */
 const initialState: ConsentState = {
   value: []
 };
 
+/**
+ * Consent redux-toolkit «slice»
+ */
 export const consentSlice = createSlice({
   name: 'consent',
   initialState,
   reducers: {
-    addConsent: (state, action: PayloadAction<Consent>) => {
+    addConsent: (state, action: PayloadAction<ConsentServer>) => {
       state.value = [action.payload, ...state.value];
     },
-    addInitialMockData: (state, action: PayloadAction<Consent[]>) => {
+    addInitialMockData: (state, action: PayloadAction<ConsentServer[]>) => {
       state.value = action.payload;
     }
   }
 });
 
-export const { addConsent, addInitialMockData } = consentSlice.actions;
+/**
+ * Adding consent action creator
+ */
+export const addConsent = consentSlice.actions.addConsent;
+
+/**
+ * Adding initial consents mocks action creator
+ */
+export const addInitialMockData = consentSlice.actions.addInitialMockData;
+
+/**
+ * Consent reducer
+ */
 export const consentSliceReducer = consentSlice.reducer;
