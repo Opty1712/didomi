@@ -1,12 +1,17 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
+import { ConsentServer, useAppSelector } from '../../store';
 import { ConsentsView } from './ConsentsView';
-import { useConsents } from './useConsents';
 
 /**
- * Consents - table view
+ * Consents
  */
 export const Consents = memo(() => {
-  const { rows } = useConsents();
+  const consents = useAppSelector((state) => state.consents.value);
+
+  const rows: ConsentServer[] = useMemo(
+    () => consents.map((item, index) => ({ ...item, index: index + 1 })),
+    [consents]
+  );
 
   return <ConsentsView rows={rows} />;
 });

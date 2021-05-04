@@ -12,7 +12,7 @@ export const Layout = memo(({ children }) => {
   const { isSwitchedOn, toggleSwitcher } = useSwitcher(true);
 
   return (
-    <Root>
+    <Root data-testid={rootTestId}>
       <Header isLeftColumnFullyVisible={isSwitchedOn} />
       <LeftColumn
         isLeftColumnFullyVisible={isSwitchedOn}
@@ -27,3 +27,5 @@ Layout.displayName = nameof(Layout);
 const Root = styled.div`
   display: flex;
 `;
+
+export const rootTestId = 'rootTestId';

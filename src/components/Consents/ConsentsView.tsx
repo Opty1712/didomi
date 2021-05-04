@@ -10,12 +10,12 @@ type ConsentsViewProps = {
 };
 
 /**
- * Consents - table view
+ * ConsentsView - dub view component
  */
 export const ConsentsView = memo<ConsentsViewProps>(({ rows }) => (
   <>
     <Title>Collected Consents</Title>
-    <GridWrapper>
+    <GridWrapper data-testid={consentTestId}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -35,9 +35,25 @@ const th = css`
 `;
 
 // Material has incorrect `d.ts` for «@params» in «renderCell»
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderConsentsCell = (params: any) => {
+// Need to redefined it.
+type RenderConsentsCell = (params: {
+  value:
+    | Array<React.ReactNode>
+    | void
+    | null
+    | string
+    | number
+    | boolean
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    | object;
+}) => JSX.Element;
+
+export const renderConsentsCell: RenderConsentsCell = (params) => {
   const value = params?.value;
+
+  if (!value) {
+    return <></>;
+  }
 
   return <div>{Array.isArray(value) ? value.join(', ') : value}</div>;
 };
@@ -68,3 +84,5 @@ const columns: GridColDef[] = [
 const GridWrapper = styled.div`
   padding: 0 20px 20px 20px;
 `;
+
+export const consentTestId = 'consentTestId';

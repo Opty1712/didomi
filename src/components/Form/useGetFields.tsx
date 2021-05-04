@@ -21,6 +21,7 @@ export const useGetFields = (
     () =>
       inputKeys.map((item) => (
         <TextField
+          data-testid={item}
           key={item}
           label={inputFields[item]}
           required
@@ -57,6 +58,7 @@ export const useGetFields = (
           key={item}
           control={
             <Checkbox
+              data-testid={item}
               onChange={() => void 0}
               name="checkedA"
               color="primary"

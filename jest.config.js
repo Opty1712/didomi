@@ -10,5 +10,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   collectCoverage: true,
   coverageReporters: ['lcov', 'html', 'text-summary'],
-  collectCoverageFrom: ['./src/**/*.tsx']
+  collectCoverageFrom: ['./src/**/*.(ts|tsx)', '!src/mocks/*.*']
 };

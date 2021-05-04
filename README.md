@@ -1,5 +1,19 @@
 # Email preferences (technical task)
 
+## The decision
+
+### Demo
+→→→→→→→→→→ 🔥 **<a href="https://didomi.vercel.app/" target="_blank">Demo</a>** 🔥 ←←←←←←←←←←
+
+
+### Test Coverage
+![Test coverage](testCoverage.png)
+
+
+
+
+## The challenge
+
 ### Deliverables
 The expected deliverable is a fully functional project that includes the following:
 

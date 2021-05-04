@@ -39,7 +39,7 @@ export const FormView = memo<FormViewProps>(
     return (
       <>
         <Title>Give consent</Title>
-        <Root noValidate autoComplete="off">
+        <Root noValidate autoComplete="off" data-testid={formTestId}>
           {textFields}
           <Typography className={text}>I agree to *:</Typography>
           <FormGroup className={consents}>{checkboxFields}</FormGroup>
@@ -49,12 +49,12 @@ export const FormView = memo<FormViewProps>(
               color="primary"
               disabled={isButtonDisabled}
               onClick={onSend}
+              data-testid={buttonTestId}
             >
               Give consent {isLoading && <CircularProgress size={14} />}
             </Button>
           </ButtonWrapper>
-        </Root>
-
+        </Root>{' '}
         {isNotificationVisible && (
           <Snackbar
             open={true}
@@ -67,9 +67,7 @@ export const FormView = memo<FormViewProps>(
               onClose={hideNotification}
               severity={isAdded ? 'success' : 'error'}
             >
-              {isAdded
-                ? 'Your consent has been saved'
-                : 'Your consent has not been saved'}
+              {isAdded ? textSaved : 'Your consent has not been saved'}
             </Alert>
           </Snackbar>
         )}
@@ -78,3 +76,7 @@ export const FormView = memo<FormViewProps>(
   }
 );
 FormView.displayName = nameof(FormView);
+
+export const formTestId = 'formTestId';
+export const buttonTestId = 'buttonTestId';
+export const textSaved = 'Your consent has been saved';
